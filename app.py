@@ -32,6 +32,9 @@ if uploaded_file is not None:
     keywords_file = 'trial_keywords.csv'
     output_filename = 'webscraper_output'
 
+    df['Tertiary Keywords'] = df ['CITY']
+    df = df[['Tertiary Keywords']]
+    
     headlines_df = webscraper(df, keywords_file, output_filename)
     st.write(headlines_df)
     
