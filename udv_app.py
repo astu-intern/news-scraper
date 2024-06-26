@@ -36,8 +36,8 @@ if uploaded_file is not None:
     df = df[['Tertiary Keywords', 'START_DATE', 'END_DATE']]
     
     headlines_df = webscraper(df, keywords_file, output_filename)
-    #st.write("headlines: ")
-    #st.write(headlines_df)
+    st.header('Headlines:')
+    st.write(headlines_df)
 
 
 
@@ -62,6 +62,7 @@ if uploaded_file is not None:
 
     transport = st.checkbox("Transport")
     if transport:
+        st.header('Predictions:')
         predicted_data = status_predictor(unpredicted_data[3], transport_model,  transport_tokenizer)
         st.write(predicted_data)
         #results = predictions_compiler(predicted_data)
