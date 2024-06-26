@@ -348,7 +348,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
 
         csv_filename = key_list[i] + '.csv'
         print(f"{i} of {query_no} done")
-        st.write(f"{i + 1} of {query_no} done")
+        #st.write(f"{i + 1} of {query_no} done")
     print("Webscraping Done!")
     final_df = pd.DataFrame(response_df)
     # final_df.to_csv('headlines_' + cities_file)
@@ -385,7 +385,7 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
 
     df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
                     output_filename=output_filename, start_list=start_list, end_list=end_list)
-    st.write(df)
+    #st.write(df)
     return df[['headline']]
 
 
