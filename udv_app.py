@@ -37,8 +37,8 @@ if uploaded_file is not None:
     
     headlines_df = webscraper(df, keywords_file, output_filename)
     st.header('Headlines:')
-    st.write(headlines_df)
-
+    headlines_df.index = np.arange(1, len(headlines_df) + 1)
+    st.dataframe(headlines_df, use_container_width = True)
 
 
 
@@ -64,7 +64,8 @@ if uploaded_file is not None:
     if transport:
         st.header('Predictions:')
         predicted_data = status_predictor(unpredicted_data[3], transport_model,  transport_tokenizer)
-        st.write(predicted_data)
+        predicted_data.index = np.arange(1, len(predicted_data) + 1)
+        st.dataframe(predicted_data, use_container_width = True)
         #results = predictions_compiler(predicted_data)
 
         #loc_pred_data = location_status_predictor(unpredicted_data)
