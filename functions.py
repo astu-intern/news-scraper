@@ -368,8 +368,8 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
     import csv
     import pandas as pd
     import os
-    st.write('cities_df')
-    st.write(cities_df)
+    #st.write('cities_df')
+    #st.write(cities_df)
     if whitelist == 1:
         publisher_whitelist = list(pd.read_csv(whitelist_file)['name'])
     else:
