@@ -1,6 +1,8 @@
  # all required functions
 import pandas as pd
 import os
+
+import streamlit
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 import requests
@@ -10,10 +12,55 @@ import string
 import datetime
 import csv
 import streamlit as st
+import geotext
+import locationtagger
+import time
+
 # function 1 :
 
 
-def status_predictor(unpredicted_data):
+@st.cache_data
+def status_predictor(unpredicted_data, model, tokenizer):
+
+
+    # preprocessing the data
+    def preprocess_text(text):
+        inputs = tokenizer(text, return_tensors = 'pt', max_length = 128, padding = "max_length", truncation = True)
+        return inputs['input_ids'], inputs['attention_mask']
+
+    # map the labels
+    label_to_category = {0: 0, 1: 1}
+
+
+    tokenizer = BertTokenizer.from_pretrained(tokenizer)
+    model = BertForSequenceClassification.from_pretrained(model)
+    model.eval()
+
+    headlines_data = unpredicted_data
+    st.write(headlines_data)
+    # apply preprocessing
+    headlines_data['input_ids'], headlines_data['attention_mask'] = zip(*headlines_data['headline'].apply(preprocess_text))
+
+    # make the predictions
+    predictions = []
+    for input_ids, attention_mask in zip(headlines_data['input_ids'], headlines_data['attention_mask']):
+        with torch.no_grad():
+            outputs = model(input_ids, attention_mask = attention_mask)
+            logits = outputs.logits
+            predicted_class = torch.argmax(logits, dim = 1).item()
+            predicted_category = label_to_category[predicted_class]
+            predictions.append(predicted_category)
+
+    # add the predictions to the dataframe
+    headlines_data['predicted_status'] = predictions
+    headlines_data = headlines_data[['headline','predicted_status']]
+
+    return headlines_data
+
+# location fn
+
+def location_status_predictor(unpredicted_data):
+
     predicted_data = []
     # store all the models and tokenizers
     transport_tokenizer = "augmented_models/transport/tokenizer"
@@ -34,10 +81,16 @@ def status_predictor(unpredicted_data):
         inputs = tokenizer(text, return_tensors = 'pt', max_length = 128, padding = "max_length", truncation = True)
         return inputs['input_ids'], inputs['attention_mask']
 
+    
+
+
     # map the labels
     label_to_category = {0: 0, 1: 1}
 
     for i in range(len(unpredicted_data)):
+        unpredicted_data[i]["location"] = unpredicted_data[i]["headline"].apply(lambda x: location_tagger(x))
+
+        unpredicted_data[i]['stripped_headline'] = unpredicted_data[i].apply(lambda row: strip_location(row['headline'], row['location']), axis=1)
         tokenizer = BertTokenizer.from_pretrained(tokenizers[i])
         model = BertForSequenceClassification.from_pretrained(models[i])
         model.eval()
@@ -45,7 +98,7 @@ def status_predictor(unpredicted_data):
         headlines_data = unpredicted_data[i]
 
         # apply preprocessing
-        headlines_data['input_ids'], headlines_data['attention_mask'] = zip(*headlines_data['headline'].apply(preprocess_text))
+        headlines_data['input_ids'], headlines_data['attention_mask'] = zip(*headlines_data['stripped_headline'].apply(preprocess_text))
 
         # make the predictions
         predictions = []
@@ -59,10 +112,31 @@ def status_predictor(unpredicted_data):
 
         # add the predictions to the dataframe
         headlines_data['predicted_status'] = predictions
-        headlines_data = headlines_data[['headline','predicted_status']]
+        headlines_data = headlines_data[['headline','stripped_headline','predicted_status']]
         predicted_data.append(headlines_data)
 
     return predicted_data
+
+def location_tagger(headline):
+    import nltk
+    import locationtagger
+    nltk.download('punkt', quiet=True)
+    nltk.download('averaged_perceptron_tagger', quiet=True)
+    nltk.download('maxent_ne_chunker', quiet=True)
+    nltk.download('words', quiet=True)
+
+    # extracting entities.
+    place_entity = locationtagger.find_locations(text = headline)
+    loc_list = place_entity.countries + place_entity.regions + place_entity.cities
+    return loc_list
+
+def strip_location(headline, location_list):
+  location_list = [loc.lower() for loc in location_list]
+  words = headline.split()
+  stripped_words = [word for word in words if word.lower() not in location_list]
+  stripped_headline = ' '.join(stripped_words)
+  return stripped_headline
+
 
 # function 2 :
 
@@ -134,7 +208,8 @@ def predictions_compiler(predicted_data):
 # webscraper functions
 
 
-# @title Fxn : area_from_pincode
+
+ # @title Fxn : area_from_pincode
 def area_from_pincode(pincode):
     '''
     Gets Area name from pincode
@@ -152,16 +227,24 @@ def area_from_pincode(pincode):
     return area_names
 
 
+
 # @title Fxn : keywords_from_file
-def keywords_from_file(cities, keywords_file):
+def keywords_from_file(cities_df, keywords_file):
     '''
     Reads keywords from file
     '''
 
+    cities_names = cities_df['Tertiary Keywords']
+    start_date = cities_df['START_DATE']
+    end_date = cities_df['END_DATE']
+
     query_data = pd.DataFrame()
-    for city in cities:
+    for city in cities_names:
         temp_df = pd.read_csv(keywords_file)
         temp_df['Tertiary Keywords'] = city
+        temp_df['START_DATE'] = start_date
+        temp_df['END_DATE'] = end_date
+
         query_data = pd.concat([query_data, temp_df], ignore_index=True)
 
     query_data['count'] = 0
@@ -175,6 +258,7 @@ def keywords_from_file(cities, keywords_file):
     return (query_data, query_no, key_list)
 
 
+
 # @title Fxn : search_url
 def search_url(url_base,keywords,date_filter):
     '''
@@ -183,13 +267,15 @@ def search_url(url_base,keywords,date_filter):
     keywords = keywords.split()
     url_list = list()
 
-    for i in range(0,5):
+    for i in range(0,1):
       url = url_base
       url += '+'.join(keywords)
       url += "&tbm=nws&tbs=cdr:1"
       if date_filter!=0:
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
       url_list.append(url)
+
+    st.write(url_list)
 
     return url_list
 
@@ -198,56 +284,57 @@ def search_url(url_base,keywords,date_filter):
 def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str=''):
     headers = {
         "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
     }
 
-    if str(start_date_str)!="nan" or str(end_date_str)!="nan":
-      date_filter = [start_date_str, end_date_str]
+    if str(start_date_str) != "nan" or str(end_date_str) != "nan":
+        date_filter = [start_date_str, end_date_str]
     else:
-      date_filter=0
-    url_list = search_url(url_base,keywords,date_filter)
+        date_filter = 0
+    url_list = search_url(url_base, keywords, date_filter)
     news_results = list()
     for url in url_list:
-      response = requests.get(url, headers = headers)
-      soup = BeautifulSoup(response.content, "html.parser")
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.content, "html.parser")
 
-      for el in soup.select("div.SoaBEf"):
-          result = {
-                  "link": el.find("a")["href"],
-                  "headline": el.select_one("div.MBeuO").get_text(),
-                  "date": el.select_one(".LfVVr").get_text(),
-                  "source": el.select_one(".NUnG9d span").get_text()
-              }
-          news_results.append(result)
+        for el in soup.select("div.SoaBEf"):
+            result = {
+                "link": el.find("a")["href"],
+                "headline": el.select_one("div.MBeuO").get_text(),
+                "date": el.select_one(".LfVVr").get_text(),
+                "source": el.select_one(".NUnG9d span").get_text()
+            }
+            news_results.append(result)
+
 
     return news_results
 
 
 # @title Fxn : CSV_Dumper
-def CSV_dumper(cities_file, url_base, query_data, query_no, key_list, output_filename, start_list=list(), end_list=list(), pincode_search=0, whitelist=0, publisher_whitelist=list()):
+def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filename, start_list=list(), end_list=list(), pincode_search=0, whitelist=0, publisher_whitelist=list()):
     try:
         os.makedirs(output_filename)
     except FileExistsError:
-        #print('Folder already exists!')
+        # print('Folder already exists!')
         pass
 
     response_df = pd.DataFrame()
     area_names = list()
     for i in range(query_no):
-        data_dict = {'headline':list(),'link':list()}
-        if pincode_search==1:
+        data_dict = {'headline': list(), 'link': list()}
+        if pincode_search == 1:
             area_names.append(area_from_pincode(str(query_data.iloc[i]['pincode'])))
         else:
             area_names.append(" ")
 
         for j in range(len(area_names[i])):
-            if len(start_list)!=0 and len(end_list)!=0:
+            if len(start_list) != 0 and len(end_list) != 0:
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i], start_list[i], end_list[i])
             else:
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i])
 
             for k in range(len(data_iter)):
-                if (not whitelist==1) or (data_iter[k]["source"] in publisher_whitelist):
+                if (not whitelist == 1) or (data_iter[k]["source"] in publisher_whitelist):
                     data_dict['headline'].append(data_iter[k]['headline'])
                     data_dict['link'].append(data_iter[k]['link'])
                     try:
@@ -261,7 +348,7 @@ def CSV_dumper(cities_file, url_base, query_data, query_no, key_list, output_fil
 
         csv_filename = key_list[i] + '.csv'
         print(f"{i} of {query_no} done")
-        st.write(f"{i+1} of {query_no} done")
+        st.write(f"{i + 1} of {query_no} done")
     print("Webscraping Done!")
     final_df = pd.DataFrame(response_df)
     # final_df.to_csv('headlines_' + cities_file)
@@ -269,8 +356,9 @@ def CSV_dumper(cities_file, url_base, query_data, query_no, key_list, output_fil
     return final_df
 
 
-# @title Fxn : webscraper
-def webscraper(cities_file, keywords_file = 'trial_keywords.csv', output_filename='webscraper_output', pincode_search=0, whitelist=0, whitelist_file=''):
+ # @title Fxn : webscraper
+@st.cache_data
+def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename='webscraper_output', pincode_search=0, whitelist=0, whitelist_file=''):
     # Importing all the relevant libraries
     import requests
     from bs4 import BeautifulSoup
@@ -280,20 +368,34 @@ def webscraper(cities_file, keywords_file = 'trial_keywords.csv', output_filenam
     import csv
     import pandas as pd
     import os
-
-    
-
-    if whitelist==1:
+    st.write('cities_df')
+    st.write(cities_df)
+    if whitelist == 1:
         publisher_whitelist = list(pd.read_csv(whitelist_file)['name'])
     else:
         publisher_whitelist = list()
 
     url_base = 'https://www.google.com/search?q='
 
-    cities = (cities_file.iloc[:,0])
-    query_data, query_no, key_list = keywords_from_file(cities, keywords_file)
+    # cities = (cities_file.iloc[:,0])
+    query_data, query_no, key_list = keywords_from_file(cities_df, keywords_file)
 
-    df = CSV_dumper(cities_file=cities_file, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list, output_filename=output_filename)
+    start_list = query_data['START_DATE']
+    end_list = query_data['END_DATE']
+
+    df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
+                    output_filename=output_filename, start_list=start_list, end_list=end_list)
+    st.write(df)
     return df[['headline']]
+
+
+
+
+
+
+
+
+
+
 
 
