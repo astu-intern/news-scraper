@@ -11,7 +11,7 @@ import csv
 import string
 import datetime
 import csv
-
+import numpy as np
 
 # File upload
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
