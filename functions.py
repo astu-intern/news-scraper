@@ -12,8 +12,8 @@ import string
 import datetime
 import csv
 import streamlit as st
-import geotext
-import locationtagger
+#import geotext
+#import locationtagger
 import time
 
 # function 1 :
