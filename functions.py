@@ -275,7 +275,7 @@ def search_url(url_base,keywords,date_filter):
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
       url_list.append(url)
 
-    st.write(url_list)
+    #st.write(url_list)
 
     return url_list
 
