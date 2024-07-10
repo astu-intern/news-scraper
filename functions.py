@@ -12,8 +12,8 @@ import string
 import datetime
 import csv
 import streamlit as st
-#import geotext
-#import locationtagger
+import geotext
+import locationtagger
 import time
 
 # function 1 :
@@ -37,7 +37,7 @@ def status_predictor(unpredicted_data, model, tokenizer):
     model.eval()
 
     headlines_data = unpredicted_data
-    st.write(headlines_data)
+    #st.write(headlines_data)
     # apply preprocessing
     headlines_data['input_ids'], headlines_data['attention_mask'] = zip(*headlines_data['headline'].apply(preprocess_text))
 
@@ -239,11 +239,12 @@ def keywords_from_file(cities_df, keywords_file):
     end_date = cities_df['END_DATE']
 
     query_data = pd.DataFrame()
-    for city in cities_names:
+    for i in range(len(cities_names)):
+        
         temp_df = pd.read_csv(keywords_file)
-        temp_df['Tertiary Keywords'] = city
-        temp_df['START_DATE'] = start_date
-        temp_df['END_DATE'] = end_date
+        temp_df['Tertiary Keywords'] = cities_names[i]
+        temp_df['START_DATE'] = start_date[i]
+        temp_df['END_DATE'] = end_date[i]
 
         query_data = pd.concat([query_data, temp_df], ignore_index=True)
 
@@ -254,7 +255,8 @@ def keywords_from_file(cities_df, keywords_file):
 
     query_no = len(list(query_data['Primary Keywords']))
     key_list = list(query_data['keywords'])
-
+    st.header('Query Data:')
+    st.write(query_data)
     return (query_data, query_no, key_list)
 
 
@@ -347,9 +349,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
         response_df = pd.concat([response_df, df], ignore_index=True)
 
         csv_filename = key_list[i] + '.csv'
-        print(f"{i} of {query_no} done")
-        #st.write(f"{i + 1} of {query_no} done")
-    print("Webscraping Done!")
+        
     final_df = pd.DataFrame(response_df)
     # final_df.to_csv('headlines_' + cities_file)
 
@@ -385,7 +385,7 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
 
     df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
                     output_filename=output_filename, start_list=start_list, end_list=end_list)
-    #st.write(df)
+    st.write(df)
     return df[['headline']]
 
 
