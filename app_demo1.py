@@ -13,7 +13,7 @@ import datetime
 import csv
 
 # File upload
-uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+uploaded_file = st.file_uploader("Choose a CSV file", type="csv") 
 
 if uploaded_file is not None:
     # To read file as dataframe
