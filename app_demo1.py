@@ -28,7 +28,7 @@ if uploaded_file is not None:
 
     st.success("File saved successfully.")
 
-    keywords_file = 'transport-keywordsfile.csv'
+    keywords_file = 'keywordsfile.csv'
     output_filename = 'webscraper_output'
 
     df['Tertiary Keywords'] = df['CITY']
