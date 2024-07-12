@@ -169,7 +169,7 @@ def category_predictor(headlines_data):
 
     # add the predictions to the dataframe
     headlines_data['predicted_category'] = predictions
-    headlines_data = headlines_data[['headline','predicted_category']]
+    headlines_data = headlines_data[['headline','predicted_category','source','city','link']]
 
     # sort according to category
     transport = headlines_data[headlines_data['predicted_category'] == 'transport']
@@ -323,7 +323,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
     response_df = pd.DataFrame()
     area_names = list()
     for i in range(query_no):
-        data_dict = {'headline': list(), 'link': list()}
+        data_dict = {'headline': list(), 'link': list(), 'source':list(),'city':list(}
         if pincode_search == 1:
             area_names.append(area_from_pincode(str(query_data.iloc[i]['pincode'])))
         else:
@@ -339,6 +339,8 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
                 if (not whitelist == 1) or (data_iter[k]["source"] in publisher_whitelist):
                     data_dict['headline'].append(data_iter[k]['headline'])
                     data_dict['link'].append(data_iter[k]['link'])
+                    data_dict['source'].append(data_iter[k]['source'])
+                    data_dict['city'].append(query_data[i]['Tertiary Keywords'])
                     try:
                         if data_iter[k]['link'] in list(query_data['Website Link']):
                             query_data.iloc[i, 8] = True
@@ -386,7 +388,7 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
     df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
                     output_filename=output_filename, start_list=start_list, end_list=end_list)
     st.write(df)
-    return df[['headline']]
+    return df[['headline','link','source']]
 
 
 
