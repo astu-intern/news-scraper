@@ -323,7 +323,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
     response_df = pd.DataFrame()
     area_names = list()
     for i in range(query_no):
-        data_dict = {'headline': list(), 'link': list(), 'source':list(),'city':list(}
+        data_dict = {'headline': list(), 'link': list(), 'source':list(),'city':list()}
         if pincode_search == 1:
             area_names.append(area_from_pincode(str(query_data.iloc[i]['pincode'])))
         else:
