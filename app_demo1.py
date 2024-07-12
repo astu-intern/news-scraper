@@ -18,7 +18,7 @@ uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 if uploaded_file is not None:
     # To read file as dataframe
     df = pd.read_csv(uploaded_file, encoding='cp1252')
-    df = df.tail(3)
+    df = df.tail(1)
     df.index = range(0, len(df))
     # Display the dataframe
     st.write(df)
@@ -29,7 +29,7 @@ if uploaded_file is not None:
 
     st.success("File saved successfully.")
 
-    keywords_file = 'transport-keywordsfile - Copy.csv'
+    keywords_file = 'trial_keywords.csv'
     output_filename = 'webscraper_output'
 
     df['Tertiary Keywords'] = df['CITY']
