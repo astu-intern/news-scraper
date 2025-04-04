@@ -362,14 +362,6 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
 @st.cache_data
 def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename='webscraper_output', pincode_search=0, whitelist=0, whitelist_file=''):
     # Importing all the relevant libraries
-    import requests
-    from bs4 import BeautifulSoup
-    import csv
-    import string
-    import datetime
-    import csv
-    import pandas as pd
-    import os
     #st.write('cities_df')
     #st.write(cities_df)
     if whitelist == 1:
