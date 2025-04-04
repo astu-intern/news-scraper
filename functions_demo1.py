@@ -340,7 +340,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
                     data_dict['headline'].append(data_iter[k]['headline'])
                     data_dict['link'].append(data_iter[k]['link'])
                     data_dict['source'].append(data_iter[k]['source'])
-                    data_dict['city'].append(query_data[i]['Tertiary Keywords'])
+                    data_dict['city'].append(query_data['Tertiary Keywords'][i])
                     # try:
                     #     if data_iter[k]['link'] in list(query_data['Website Link']):
                     #         query_data.iloc[i, 8] = True
