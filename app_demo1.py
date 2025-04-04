@@ -33,7 +33,7 @@ if uploaded_file is not None:
     output_filename = 'webscraper_output'
 
     df['Tertiary Keywords'] = df['CITY']
-    df = df[['Tertiary Keywords','START_DATE','END_DATE']]
+    df = df[['Tertiary Keywords','START_DATE','END_DATE']].copy()
     
 
     headlines_df = webscraper(df, keywords_file, output_filename)
