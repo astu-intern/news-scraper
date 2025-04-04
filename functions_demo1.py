@@ -253,7 +253,7 @@ def keywords_from_file(cities_df, keywords_file):
     cols=['Primary Keywords','Secondary Keywords','Tertiary Keywords']
     query_data['keywords'] = query_data[cols].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
 
-    query_no = len(list(query_data['Primary Keywords']))
+    query_no = query_data['Tertiary Keywords'].count()
     key_list = list(query_data['keywords'])
     st.header('Query Data:')
     st.write(query_data)
