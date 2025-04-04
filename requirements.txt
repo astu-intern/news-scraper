@@ -3,4 +3,4 @@ transformers
 bs4
 geotext
 locationtagger
-dateutil
+
