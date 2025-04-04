@@ -34,7 +34,7 @@ if uploaded_file is not None:
     output_filename = 'webscraper_output'
 
     df['Tertiary Keywords'] = df['CITY']
-    df['PROMISED_DATE']=pd.to_datatime(df['PROMISED_DATE'])
+    df['PROMISED_DATE']=pd.to_datetime(df['PROMISED_DATE'])
     df['START_DATE']=df['PROMISED_DATE'].apply(lambda x: x - relativedelta(months=1))
     df['END_DATE']=df['PROMISED_DATE']
     st.write(df['Tertiary Keywords'],df['START_DATE'],df['END_DATE'])
