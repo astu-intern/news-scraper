@@ -35,7 +35,7 @@ if uploaded_file is not None:
     df['Tertiary Keywords'] = df['CITY']
     df['START_DATE']=df['PROMISED_DATE'].apply(lambda x: x -relativedelta(months=1))
     df['END_DATE']=df['PROMISED_DATE']
-    print(df['Tertiary Keywords'],df['START_DATE'],df['END_DATE'])
+    st.write(df['Tertiary Keywords'],df['START_DATE'],df['END_DATE'])
     df = df[['Tertiary Keywords','START_DATE','END_DATE']].copy()
     
 
