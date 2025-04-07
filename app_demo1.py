@@ -41,8 +41,7 @@ if uploaded_file is not None:
     
 
     headlines_df = webscraper(df, keywords_file, output_filename)
-
-
+    st.write("test",headlines_df)
 
     transport_tokenizer = "augmented_models/transport/tokenizer"
     transport_model = "augmented_models/transport/model"
