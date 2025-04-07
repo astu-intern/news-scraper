@@ -143,7 +143,7 @@ def strip_location(headline, location_list):
 def category_predictor(headlines_data):
     # path for model and tokenizer
     tokenizer = BertTokenizer.from_pretrained('category_model/tokenizer')
-    st.write("Tokenizer passed")
+    # st.write("Tokenizer passed")
     model = BertForSequenceClassification.from_pretrained('category_model/model')
     model.eval()
     
@@ -348,7 +348,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
                     # except:
                     #     pass
     
-        st.write("pass")
+        # st.write("pass")
         df = pd.DataFrame(data_dict)
         response_df = pd.concat([response_df, df], ignore_index=True)
         
