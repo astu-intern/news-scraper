@@ -1,0 +1,9 @@
+# .streamlit/config.toml
+[server]
+runOnSave = false
+
+[logger]
+level = "error"
+
+[watcher]
+watchFiles = false
