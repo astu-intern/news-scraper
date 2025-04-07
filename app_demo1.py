@@ -3,7 +3,7 @@ import pandas as pd
 import subprocess
 import os
 import torch
-from transformers import BertTokenizer, BertForSequenceClassification
+# from transformers import BertTokenizer, BertForSequenceClassification
 from functions_demo1 import category_predictor, status_predictor, predictions_compiler, webscraper
 import requests
 from bs4 import BeautifulSoup
