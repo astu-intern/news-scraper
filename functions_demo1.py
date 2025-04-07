@@ -143,9 +143,10 @@ def strip_location(headline, location_list):
 def category_predictor(headlines_data):
     # path for model and tokenizer
     tokenizer = BertTokenizer.from_pretrained('category_model/tokenizer')
+    st.write("Tokenizer passed")
     model = BertForSequenceClassification.from_pretrained('category_model/model')
     model.eval()
-    st.write("Tokenizer passed")
+    
     # preprocessing the data
     def preprocess_text(text):
         inputs = tokenizer(text, return_tensors = 'pt', max_length = 128, padding = "max_length", truncation = True)
