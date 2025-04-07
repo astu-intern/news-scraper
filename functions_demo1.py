@@ -335,7 +335,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i], start_list[i], end_list[i])
             else:
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i])
-            st.write(data_iter)
+            # st.write(data_iter)
             for k in range(len(data_iter)):
                 if (not whitelist == 1) or (data_iter[k]["source"] in publisher_whitelist):
                     data_dict['headline'].append(data_iter[k]['headline'])
@@ -381,7 +381,7 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
 
     df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
                     output_filename=output_filename, start_list=start_list, end_list=end_list)
-    # st.write(df)
+    st.write(df)
     return df
 
 
