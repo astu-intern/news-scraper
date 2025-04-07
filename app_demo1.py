@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 
 # File upload
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv") 
-
+os.environ["STREAMLIT_WATCHER_TYPE"] = "none"
 if uploaded_file is not None:
     # To read file as dataframe
     df = pd.read_csv(uploaded_file)
