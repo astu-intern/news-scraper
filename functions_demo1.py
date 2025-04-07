@@ -296,10 +296,13 @@ def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str=''):
         date_filter = 0
     url_list = search_url(url_base, keywords, date_filter)
     news_results = list()
+    flag=0
     for url in url_list:
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.content, "html.parser")
-
+        if flag==0:
+          st.write(soup)
+          flag=1
         for el in soup.select("div.SoaBEf"):
             result = {
                 "link": el.find("a")["href"],
