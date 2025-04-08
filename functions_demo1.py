@@ -273,7 +273,7 @@ def search_url(url_base,keywords,query_data,pos,date_filter):
     for i in range(0,1):
       url = url_base
       url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]
-      url += '+'.join(query_data['Tertiary Keywords'][pos])
+      url += '+'.join(query_data['Tertiary Keywords'][pos].split())
       url += "&tbm=nws&tbs=cdr:1"
       if date_filter!=0:
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
