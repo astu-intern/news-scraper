@@ -263,43 +263,44 @@ def keywords_from_file(cities_df, keywords_file):
 
 
 # @title Fxn : search_url
-def search_url(url_base,keywords,date_filter):
+def search_url(url_base,keywords,date_filter,query_data,pos):
     '''
     Designs the url links' list with our search keywords list
     '''
     keywords = keywords.split()
     url_list = list()
-
+    
     for i in range(0,1):
       url = url_base
-      url += '+'.join(keywords)
+      url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]
+      url += '+'.join(query_data['Tertiary Keywords'][pos])
       url += "&tbm=nws&tbs=cdr:1"
       if date_filter!=0:
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
       url_list.append(url)
-
+    
     #st.write(url_list)
-
+    
     return url_list
-
-
+    
+    
 # @title Fxn : GNewsWebScraper
-def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str=''):
+def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str='',query_data,pos):
     headers = {
         "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
     }
-
+    
     if str(start_date_str) != "nan" or str(end_date_str) != "nan":
         date_filter = [start_date_str, end_date_str]
     else:
-        date_filter = 0
-    url_list = search_url(url_base, keywords, date_filter)
-    news_results = list()
-    # flag=0
-    for url in url_list:
-        response = requests.get(url, headers=headers)
-        soup = BeautifulSoup(response.content, "html.parser")
+        date_filter = 0 
+    url_list = search_url(url_base, keywords, date_filter,query_data,pos)
+    news_results = list() 
+    # flag=0 
+    for url in url_list: 
+        response = requests.get(url, headers=headers) 
+        soup = BeautifulSoup(response.content, "html.parser") 
         # if flag==0:
         #   st.write(soup)
         #   flag=1
@@ -335,7 +336,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
 
         for j in range(len(area_names[i])):
             if len(start_list) != 0 and len(end_list) != 0:
-                data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i], start_list[i], end_list[i])
+                data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i], start_list[i], end_list[i],query_data,i)
             else:
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i])
             # st.write(data_iter)
