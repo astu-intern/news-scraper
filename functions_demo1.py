@@ -241,7 +241,6 @@ def keywords_from_file(cities_df, keywords_file):
 
     query_data = pd.DataFrame()
     for i in range(len(cities_names)):
-        
         temp_df = pd.read_csv(keywords_file)
         temp_df['Tertiary Keywords'] = cities_names[i]
         temp_df['START_DATE'] = start_date[i]
@@ -272,8 +271,9 @@ def search_url(url_base,keywords,query_data,pos,date_filter):
     
     for i in range(0,1):
       url = url_base
-      url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]
-      url += '+'.join(query_data['Tertiary Keywords'][pos].split())
+      url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]+"+"
+      url += query_data['Tertiary Keywords'][pos].replace(' ', '+')
+)
       url += "&tbm=nws&tbs=cdr:1"
       if date_filter!=0:
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
