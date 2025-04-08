@@ -384,8 +384,12 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
 
     df = CSV_dumper(cities_df=cities_df, url_base=url_base, query_data=query_data, query_no=query_no, key_list=key_list,
                     output_filename=output_filename, start_list=start_list, end_list=end_list)
-    st.write(df)
-    return df
+    if df.empty==True:
+        st.warning("Data is empty")
+        st.stop()
+    else:
+        st.write(df)
+        return df
 
 
 
