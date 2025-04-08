@@ -263,7 +263,7 @@ def keywords_from_file(cities_df, keywords_file):
 
 
 # @title Fxn : search_url
-def search_url(url_base,keywords,date_filter,query_data,pos):
+def search_url(url_base,keywords,query_data,pos,date_filter):
     '''
     Designs the url links' list with our search keywords list
     '''
@@ -285,7 +285,7 @@ def search_url(url_base,keywords,date_filter,query_data,pos):
     
     
 # @title Fxn : GNewsWebScraper
-def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str='',query_data,pos):
+def GNewsWebScraper(url_base,keywords,query_data,pos,start_date_str='', end_date_str=''):
     headers = {
         "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
@@ -295,7 +295,7 @@ def GNewsWebScraper(url_base,keywords,start_date_str='', end_date_str='',query_d
         date_filter = [start_date_str, end_date_str]
     else:
         date_filter = 0 
-    url_list = search_url(url_base, keywords, date_filter,query_data,pos)
+    url_list = search_url(url_base, keywords,query_data,pos, date_filter)
     news_results = list() 
     # flag=0 
     for url in url_list: 
@@ -336,7 +336,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
 
         for j in range(len(area_names[i])):
             if len(start_list) != 0 and len(end_list) != 0:
-                data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i], start_list[i], end_list[i],query_data,i)
+                data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i],query_data,i, start_list[i], end_list[i])
             else:
                 data_iter = GNewsWebScraper(url_base, area_names[i][j] + '+' + key_list[i])
             # st.write(data_iter)
