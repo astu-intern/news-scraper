@@ -389,7 +389,6 @@ def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename=
         st.stop()
     else:
         st.write(df)
-        st.write("Test")
         return df
 
 
