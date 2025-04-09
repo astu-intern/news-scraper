@@ -272,7 +272,7 @@ def search_url(url_base,keywords,query_data,pos,date_filter):
     for i in range(0,1):
       url = url_base
       url += query_data['Vendor'][pos]+'+'
-      url += query_data['Tertiary Keywords'][pos].replace(' ', '+')
+      url += query_data['Tertiary Keywords'][pos].replace(' ', '+')+"+"
       url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]+"+"
       
       url += "&tbm=nws&tbs=cdr:1"
