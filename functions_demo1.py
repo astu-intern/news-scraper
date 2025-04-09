@@ -246,7 +246,7 @@ def keywords_from_file(cities_df, keywords_file):
         st.write("Test",temp_df)
         temp_df['START_DATE'] = start_date[i]
         temp_df['END_DATE'] = end_date[i]
-        temp_df['Vendor']=cities_df['VENDOR'][i]
+        temp_df['Vendor']=cities_df['Vendor'][i]
         query_data = pd.concat([query_data, temp_df], ignore_index=True)
     
     query_data['count'] = 0
