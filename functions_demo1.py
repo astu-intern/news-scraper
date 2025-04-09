@@ -364,7 +364,7 @@ def CSV_dumper(cities_df, url_base, query_data, query_no, key_list, output_filen
 
 
  # @title Fxn : webscraper
-@st.cache_data
+# @st.cache_data
 def webscraper(cities_df, keywords_file = 'trial_keywords.csv', output_filename='webscraper_output', pincode_search=0, whitelist=0, whitelist_file=''):
     # Importing all the relevant libraries
     #st.write('cities_df')
