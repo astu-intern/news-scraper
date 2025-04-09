@@ -130,21 +130,21 @@ def location_tagger(headline):
     loc_list = place_entity.countries + place_entity.regions + place_entity.cities
     return loc_list
 
-def strip_location(headline, location_list):
-  location_list = [loc.lower() for loc in location_list]
-  words = headline.split()
-  stripped_words = [word for word in words if word.lower() not in location_list]
-  stripped_headline = ' '.join(stripped_words)
-  return stripped_headline
+def strip_location(headline, location_list): 
+  location_list = [loc.lower() for loc in location_list] 
+  words = headline.split() 
+  stripped_words = [word for word in words if word.lower() not in location_list] 
+  stripped_headline = ' '.join(stripped_words) 
+  return stripped_headline 
 
 
 # function 2 :
 
 def category_predictor(headlines_data):
-    # path for model and tokenizer
-    tokenizer = BertTokenizer.from_pretrained('category_model/tokenizer')
-    # st.write("Tokenizer passed")
-    model = BertForSequenceClassification.from_pretrained('category_model/model')
+    # path for model and tokenizer     
+    tokenizer = BertTokenizer.from_pretrained('category_model/tokenizer') 
+    # st.write("Tokenizer passed") 
+    model = BertForSequenceClassification.from_pretrained('category_model/model') 
     model.eval()
     
     # preprocessing the data
@@ -168,9 +168,9 @@ def category_predictor(headlines_data):
             predicted_category = label_to_category[predicted_class]
             predictions.append(predicted_category)
 
-    # add the predictions to the dataframe
-    headlines_data['predicted_category'] = predictions
-    headlines_data = headlines_data[['headline','predicted_category','source','city','link']]
+    # add the predictions to the dataframe 
+    headlines_data['predicted_category'] = predictions 
+    headlines_data = headlines_data[['headline','predicted_category','source','city','link']] 
 
     # sort according to category
     transport = headlines_data[headlines_data['predicted_category'] == 'transport']
@@ -271,8 +271,10 @@ def search_url(url_base,keywords,query_data,pos,date_filter):
     
     for i in range(0,1):
       url = url_base
-      url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]+"+"
+      url += query_data['Vendor'][pos]+'+'
       url += query_data['Tertiary Keywords'][pos].replace(' ', '+')
+      url += query_data['Primary Keywords'][pos]+' OR '+query_data['Secondary Keywords'][pos]+"+"
+      
       url += "&tbm=nws&tbs=cdr:1"
       if date_filter!=0:
         url += ',cd_min:' + str(date_filter[0]) + ',cd_max:' + str(date_filter[1])+'&start='+str(i*10)
