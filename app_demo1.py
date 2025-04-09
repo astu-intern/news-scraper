@@ -37,7 +37,8 @@ if uploaded_file is not None:
     df['PROMISED_DATE']=pd.to_datetime(df['PROMISED_DATE'])
     df['START_DATE']=df['PROMISED_DATE'].apply(lambda x: x - relativedelta(months=6))
     df['END_DATE']=df['PROMISED_DATE']
-    df = df[['Tertiary Keywords','START_DATE','END_DATE']].copy()
+    df['Vendor']=df['VENDOR']
+    df = df[['Vendor','Tertiary Keywords','START_DATE','END_DATE']].copy()
     
 
     headlines_df = webscraper(df, keywords_file, output_filename)
