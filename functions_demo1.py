@@ -243,24 +243,25 @@ def keywords_from_file(cities_df, keywords_file):
     for i in range(len(cities_names)):
         temp_df = pd.read_csv(keywords_file)
         temp_df['Tertiary Keywords'] = cities_names[i]
+        st.write(temp_df)
         temp_df['START_DATE'] = start_date[i]
         temp_df['END_DATE'] = end_date[i]
-        st.write(temp_df)
+        
         query_data = pd.concat([query_data, temp_df], ignore_index=True)
-
+    
     query_data['count'] = 0
     query_data['link is present'] = False
     cols=['Primary Keywords','Secondary Keywords','Tertiary Keywords']
     query_data['keywords'] = query_data[cols].apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
-
+    
     query_no = query_data['Tertiary Keywords'].count()
     key_list = list(query_data['keywords'])
     st.header('Query Data:')
     st.write(query_data)
     return (query_data, query_no, key_list)
-
-
-
+    
+    
+    
 # @title Fxn : search_url
 def search_url(url_base,keywords,query_data,pos,date_filter):
     '''
