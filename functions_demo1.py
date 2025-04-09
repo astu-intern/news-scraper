@@ -243,7 +243,6 @@ def keywords_from_file(cities_df, keywords_file):
     for i in range(len(cities_names)):
         temp_df = pd.read_csv(keywords_file)
         temp_df['Tertiary Keywords'] = cities_names[i]
-        st.write("Test",temp_df)
         temp_df['START_DATE'] = start_date[i]
         temp_df['END_DATE'] = end_date[i]
         temp_df['Vendor']=cities_df['Vendor'][i]
