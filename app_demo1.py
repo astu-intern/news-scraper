@@ -34,8 +34,8 @@ if uploaded_file is not None:
     output_filename = 'webscraper_output'
 
     df['Tertiary Keywords'] = df['CITY']
-    df['START_DATE']=pd.to_datetime(df['START_DATE'])
-    df['END_DATE']=pd.to_datetime(df['END_DATE'])
+    df['START_DATE']=pd.to_datetime(df['START_DATE'],dayfirst=True)
+    df['END_DATE']=pd.to_datetime(df['END_DATE'],dayfirst=True)
     df['Vendor']=df['VENDOR']
     df = df[['Vendor','Tertiary Keywords','START_DATE','END_DATE']].copy()
     
