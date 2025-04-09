@@ -232,7 +232,7 @@ def area_from_pincode(pincode):
 # @title Fxn : keywords_from_file
 def keywords_from_file(cities_df, keywords_file):
     '''
-    Reads keywords from file
+    Reads keywords from file 
     '''
 
     cities_names = cities_df['Tertiary Keywords']
@@ -246,7 +246,7 @@ def keywords_from_file(cities_df, keywords_file):
         st.write("Test",temp_df)
         temp_df['START_DATE'] = start_date[i]
         temp_df['END_DATE'] = end_date[i]
-        
+        temp_df['Vendor']=cities_df['VENDOR'][i]
         query_data = pd.concat([query_data, temp_df], ignore_index=True)
     
     query_data['count'] = 0
